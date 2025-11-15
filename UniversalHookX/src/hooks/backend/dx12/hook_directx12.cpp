@@ -14,9 +14,9 @@
 
 #include "hook_directx12.hpp"
 
-#include "../../../dependencies/imgui/imgui_impl_dx12.h"
-#include "../../../dependencies/imgui/imgui_impl_win32.h"
-#include "../../../dependencies/minhook/MinHook.h"
+#include <imgui_impl_dx12.h>
+#include <imgui_impl_win32.h>
+#include <MinHook.h>
 
 #include "../../../utils/utils.hpp"
 #include "../../hooks.hpp"
@@ -194,14 +194,14 @@ static HRESULT WINAPI hkCreateSwapChainForComposition(IDXGIFactory* pFactory,
 namespace DX12 {
     void Hook(HWND hwnd) {
         if (!CreateDeviceD3D12(GetConsoleWindow( ))) {
-            LOG("[!] CreateDeviceD3D12() failed.\n");
+            LOG(spdlog::level::critical, "[!] CreateDeviceD3D12() failed.");
             return;
         }
 
-        LOG("[+] DirectX12: g_pd3dDevice: 0x%p\n", g_pd3dDevice);
-        LOG("[+] DirectX12: g_dxgiFactory: 0x%p\n", g_dxgiFactory);
-        LOG("[+] DirectX12: g_pd3dCommandQueue: 0x%p\n", g_pd3dCommandQueue);
-        LOG("[+] DirectX12: g_pSwapChain: 0x%p\n", g_pSwapChain);
+        LOG(spdlog::level::info, "[+] DirectX12: g_pd3dDevice: {}", fmt::ptr(g_pd3dDevice));
+        LOG(spdlog::level::info, "[+] DirectX12: g_dxgiFactory: {}", fmt::ptr(g_dxgiFactory));
+        LOG(spdlog::level::info, "[+] DirectX12: g_pd3dCommandQueue: {}", fmt::ptr(g_pd3dCommandQueue));
+        LOG(spdlog::level::info, "[+] DirectX12: g_pSwapChain: {}", fmt::ptr(g_pSwapChain));
 
         if (g_pd3dDevice) {
             Menu::InitializeContext(hwnd);
@@ -402,7 +402,7 @@ static void RenderImGui_DX12(IDXGISwapChain3* pSwapChain) {
 #else
 #include <Windows.h>
 namespace DX12 {
-    void Hook(HWND hwnd) { LOG("[!] DirectX12 backend is not enabled!\n"); }
+    void Hook(HWND hwnd) { LOG(spdlog::level::warn, "[!] DirectX12 backend is not enabled!"); }
     void Unhook( ) { }
 } // namespace DX12
 #endif

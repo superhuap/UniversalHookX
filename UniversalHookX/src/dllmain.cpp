@@ -7,7 +7,7 @@
 #include "hooks/hooks.hpp"
 #include "utils/utils.hpp"
 
-#include "dependencies/minhook/MinHook.h"
+#include <MinHook.h>
 
 DWORD WINAPI OnProcessAttach(LPVOID lpParam);
 DWORD WINAPI OnProcessDetach(LPVOID lpParam);
@@ -16,7 +16,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved) {
     if (fdwReason == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(hinstDLL);
 
-        U::SetRenderingBackend(DIRECTX12);
+        U::SetRenderingBackend(DIRECTX11);
 
         HANDLE hHandle = CreateThread(NULL, 0, OnProcessAttach, hinstDLL, 0, NULL);
         if (hHandle != NULL) {
@@ -31,9 +31,9 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved) {
 
 DWORD WINAPI OnProcessAttach(LPVOID lpParam) {
     Console::Alloc( );
-    LOG("[+] Rendering backend: %s\n", U::RenderingBackendToStr( ));
+    LOG(spdlog::level::info, "[+] Rendering backend: {}", U::RenderingBackendToStr( ));
     if (U::GetRenderingBackend( ) == NONE) {
-        LOG("[!] Looks like you forgot to set a backend. Will unload after pressing enter...");
+        LOG(spdlog::level::err, "[!] Looks like you forgot to set a backend. Will unload after pressing enter...");
         std::cin.get( );
 
         FreeLibraryAndExitThread(reinterpret_cast<HMODULE>(lpParam), 0);

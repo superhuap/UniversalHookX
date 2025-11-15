@@ -4,7 +4,7 @@
 
 #include "utils.hpp"
 
-#include "../console/console.hpp"
+#include <spdlog/spdlog.h>
 
 #define RB2STR(x) case x: return #x
 
@@ -64,13 +64,13 @@ namespace Utils {
 
 		while (!hwnd) {
 			EnumWindows(::EnumWindowsCallback, reinterpret_cast<LPARAM>(&hwnd));
-			LOG("[!] Waiting for window to appear.\n");
+			spdlog::info("[!] Waiting for window to appear.");
 			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		}
 
 		char name[128];
 		GetWindowTextA(hwnd, name, RTL_NUMBER_OF(name));
-		LOG("[+] Got window with name: '%s'\n", name);
+		spdlog::info("[+] Got window with name: '{}'", name);
 
 		return hwnd;
 	}

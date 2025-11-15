@@ -11,9 +11,9 @@
 
 #include "hook_directx9.hpp"
 
-#include "../../../dependencies/imgui/imgui_impl_dx9.h"
-#include "../../../dependencies/imgui/imgui_impl_win32.h"
-#include "../../../dependencies/minhook/MinHook.h"
+#include <imgui_impl_dx9.h>
+#include <imgui_impl_win32.h>
+#include <MinHook.h>
 
 #include "../../hooks.hpp"
 
@@ -28,7 +28,7 @@ static void RenderImGui_DX9(IDirect3DDevice9* pDevice);
 static bool CreateDeviceD3D9(HWND hWnd) {
     g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
     if (g_pD3D == NULL) {
-        LOG("[!] Direct3DCreate9() is failed.\n");
+        LOG(spdlog::level::critical, "[!] Direct3DCreate9() is failed.");
         return false;
     }
 
@@ -38,7 +38,7 @@ static bool CreateDeviceD3D9(HWND hWnd) {
 
     HRESULT hr = g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_NULLREF, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &g_pd3dDevice);
     if (hr != D3D_OK) {
-        LOG("[!] CreateDevice() failed. [rv: %lu]\n", hr);
+        LOG(spdlog::level::info, "CreateDevice() failed. [rv: {}]", hr);
         return false;
     }
 
@@ -88,12 +88,11 @@ static HRESULT WINAPI hkPresentEx(IDirect3DDevice9* pDevice,
 namespace DX9 {
     void Hook(HWND hwnd) {
         if (!CreateDeviceD3D9(GetConsoleWindow( ))) {
-            LOG("[!] CreateDeviceD3D9() failed.\n");
+            LOG(spdlog::level::critical, "[!] CreateDeviceD3D9() failed.");
             return;
         }
-
-        LOG("[+] DirectX9: g_pD3D: 0x%p\n", g_pD3D);
-        LOG("[+] DirectX9: g_pd3dDevice: 0x%p\n", g_pd3dDevice);
+        LOG(spdlog::level::info, "[+] DirectX9: g_pD3D: {}", fmt::ptr(g_pD3D));
+        LOG(spdlog::level::info, "[+] DirectX9: g_pd3dDevice: {}", fmt::ptr(g_pd3dDevice));
 
         if (g_pd3dDevice) {
             Menu::InitializeContext(hwnd);
@@ -177,7 +176,7 @@ static void RenderImGui_DX9(IDirect3DDevice9* pDevice) {
 #else
 #include <Windows.h>
 namespace DX9 {
-    void Hook(HWND hwnd) { LOG("[!] DirectX9 backend is not enabled!\n"); }
+    void Hook(HWND hwnd) { LOG(spdlog::level::warn, "[!] DirectX9 backend is not enabled!"); }
     void Unhook( ) { }
 } // namespace DX9
 #endif

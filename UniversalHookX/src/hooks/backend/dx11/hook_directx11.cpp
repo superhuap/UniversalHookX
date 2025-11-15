@@ -14,9 +14,9 @@
 
 #include "hook_directx11.hpp"
 
-#include "../../../dependencies/imgui/imgui_impl_dx11.h"
-#include "../../../dependencies/imgui/imgui_impl_win32.h"
-#include "../../../dependencies/minhook/MinHook.h"
+#include <imgui_impl_dx11.h>
+#include <imgui_impl_win32.h>
+#include <MinHook.h>
 
 #include "../../../utils/utils.hpp"
 #include "../../hooks.hpp"
@@ -48,7 +48,7 @@ static bool CreateDeviceD3D11(HWND hWnd) {
     };
     HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_NULL, NULL, 0, featureLevels, 2, D3D11_SDK_VERSION, &swapChainDesc, &g_pSwapChain, &g_pd3dDevice, nullptr, nullptr);
     if (hr != S_OK) {
-        LOG("[!] D3D11CreateDeviceAndSwapChain() failed. [rv: %lu]\n", hr);
+        LOG(spdlog::level::critical, "[!] D3D11CreateDeviceAndSwapChain() failed. [rv: {}]", hr);
         return false;
     }
 
@@ -165,12 +165,12 @@ static HRESULT WINAPI hkCreateSwapChainForComposition(IDXGIFactory* pFactory,
 namespace DX11 {
     void Hook(HWND hwnd) {
         if (!CreateDeviceD3D11(GetConsoleWindow( ))) {
-            LOG("[!] CreateDeviceD3D11() failed.\n");
+            LOG(spdlog::level::critical, "[!] CreateDeviceD3D11() failed.");
             return;
         }
 
-        LOG("[+] DirectX11: g_pd3dDevice: 0x%p\n", g_pd3dDevice);
-        LOG("[+] DirectX11: g_pSwapChain: 0x%p\n", g_pSwapChain);
+        LOG(spdlog::level::info, "[+] DirectX11: g_pd3dDevice: {}", fmt::ptr(g_pd3dDevice));
+        LOG(spdlog::level::info, "[+] DirectX11: g_pSwapChain: {}", fmt::ptr(g_pSwapChain));
 
         if (g_pd3dDevice) {
             Menu::InitializeContext(hwnd);
@@ -186,7 +186,7 @@ namespace DX11 {
             pDXGIAdapter->GetParent(IID_PPV_ARGS(&pIDXGIFactory));
 
             if (!pIDXGIFactory) {
-                LOG("[!] pIDXGIFactory is NULL.\n");
+                LOG(spdlog::level::critical, "[!] pIDXGIFactory is NULL.");
                 return;
             }
 
@@ -303,7 +303,7 @@ static void RenderImGui_DX11(IDXGISwapChain* pSwapChain) {
 #else
 #include <Windows.h>
 namespace DX11 {
-    void Hook(HWND hwnd) { LOG("[!] DirectX11 backend is not enabled!\n"); }
+    void Hook(HWND hwnd) { LOG(spdlog::level::warn, "[!] DirectX11 backend is not enabled!"); }
     void Unhook( ) { }
 } // namespace DX11
 #endif

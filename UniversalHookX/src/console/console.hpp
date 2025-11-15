@@ -1,15 +1,15 @@
-#pragma once
-#include <cstdio>
+﻿#pragma once
+#include <spdlog/spdlog.h>
 
-//#define DISABLE_LOGGING_CONSOLE
+// #define DISABLE_LOGGING_CONSOLE
 
-#ifndef DISABLE_LOGGING_CONSOLE
-#define LOG(...) printf(__VA_ARGS__)
-#else
+#ifdef DISABLE_LOGGING_CONSOLE
 #define LOG(...)
+#else
+#define LOG(...) spdlog::log(__VA_ARGS__)
 #endif
 
 namespace Console {
-	void Alloc( );
-	void Free( );
-}
+    void Alloc( );
+    void Free( );
+} // namespace Console

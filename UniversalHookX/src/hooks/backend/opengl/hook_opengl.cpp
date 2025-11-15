@@ -8,9 +8,9 @@
 
 #include "hook_opengl.hpp"
 
-#include "../../../dependencies/imgui/imgui_impl_opengl3.h"
-#include "../../../dependencies/imgui/imgui_impl_win32.h"
-#include "../../../dependencies/minhook/MinHook.h"
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_win32.h>
+#include <MinHook.h>
 
 #include "../../hooks.hpp"
 
@@ -39,14 +39,14 @@ namespace GL {
     void Hook(HWND hwnd) {
         HMODULE openGL32 = GetModuleHandleA("opengl32.dll");
         if (openGL32) {
-            LOG("[+] OpenGL32: ImageBase: 0x%p\n", openGL32);
+            LOG(spdlog::level::info, "[+] OpenGL32: ImageBase: ", fmt::ptr(openGL32));
 
             void* fnWglSwapBuffers = reinterpret_cast<void*>(GetProcAddress(openGL32, "wglSwapBuffers"));
             if (fnWglSwapBuffers) {
                 Menu::InitializeContext(hwnd);
 
                 // Hook
-                LOG("[+] OpenGL32: fnWglSwapBuffers: 0x%p\n", fnWglSwapBuffers);
+                LOG(spdlog::level::info, "[+] OpenGL32: fnWglSwapBuffers: {}", fmt::ptr(fnWglSwapBuffers));
 
                 static MH_STATUS wsbStatus = MH_CreateHook(reinterpret_cast<void**>(fnWglSwapBuffers), &hkWglSwapBuffers, reinterpret_cast<void**>(&oWglSwapBuffers));
 
@@ -70,7 +70,7 @@ namespace GL {
 #else
 #include <Windows.h>
 namespace GL {
-    void Hook(HWND hwnd) { LOG("[!] OpenGL backend is not enabled!\n"); }
+    void Hook(HWND hwnd) { LOG(spdlog::level::warn, "[!] OpenGL backend is not enabled!"); }
     void Unhook( ) { }
 } // namespace GL
 #endif

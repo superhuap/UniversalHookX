@@ -12,11 +12,11 @@
 #include "backend/opengl/hook_opengl.hpp"
 #include "backend/vulkan/hook_vulkan.hpp"
 
-#include "../console/console.hpp"
+#include <spdlog/spdlog.h>
 #include "../menu/menu.hpp"
 #include "../utils/utils.hpp"
 
-#include "../dependencies/minhook/MinHook.h"
+#include <MinHook.h>
 
 static HWND g_hWindow = NULL;
 static std::mutex g_mReinitHooksGuard;
@@ -24,7 +24,7 @@ static std::mutex g_mReinitHooksGuard;
 static DWORD WINAPI ReinitializeGraphicalHooks(LPVOID lpParam) {
     std::lock_guard<std::mutex> guard{g_mReinitHooksGuard};
 
-    LOG("[!] Hooks will reinitialize!\n");
+    spdlog::info("[!] Hooks will reinitialize!");
 
     HWND hNewWindow = U::GetProcessWindow( );
     while (hNewWindow == reinterpret_cast<HWND>(lpParam)) {
