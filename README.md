@@ -52,6 +52,12 @@ Tip: Try pressing the "Home" key, that will rehook graphics, and see if anything
 - [OpenGL] [Minecraft (tested on 1.19) - ui textures glitched sometimes.](https://user-images.githubusercontent.com/53657322/174030423-aa92e780-057e-451d-9d60-ddd20f668d03.png)
 
 ## Dependencies
-[MinHook](https://github.com/TsudaKageyu/minhook) - TsudaKageyu - Used for hooking (trampoline method).  
-[ImGui](https://github.com/ocornut/imgui) - ocornut - self-explanatory.  
-[Vulkan SDK](https://vulkan.lunarg.com/) - for the Vulkan API.
+- [MinHook](https://github.com/TsudaKageyu/minhook) - TsudaKageyu - Used for hooking (trampoline method).
+- [ImGui](https://github.com/ocornut/imgui) - ocornut - self-explanatory.
+- [Vulkan SDK](https://vulkan.lunarg.com/) - for the Vulkan API.
+- [spdlog](https://github.com/gabime/spdlog) - gabime - very good logger.
+
+## 修改
+- 删除dependencies文件夹.
+- 使用vcpkg工具链.
+- 日志换用spdlog. 
