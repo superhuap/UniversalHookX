@@ -3,8 +3,7 @@
 #include <dxgi.h>
 
 #include "utils.hpp"
-
-#include <spdlog/spdlog.h>
+#include "../console/console.hpp"
 
 #define RB2STR(x) case x: return #x
 
