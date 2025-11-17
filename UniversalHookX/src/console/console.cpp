@@ -2,6 +2,8 @@
 #include <Windows.h>
 #include <cstdio>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/async.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 void Console::Alloc( ) {
 #ifdef DISABLE_LOGGING_CONSOLE
@@ -25,15 +27,23 @@ void Console::Alloc( ) {
         }
     }
 
+    size_t queue_size = 8192;
+    spdlog::init_thread_pool(queue_size, 4);
+
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>( );
+    console_sink->set_pattern("\033[36m[%Y-%m-%d %H:%M:%S.%e]\033[0m %^[%l] %v%$");
 
-    console_sink->set_pattern(
-    "\033[36m[%Y-%m-%d %H:%M:%S.%e]\033[0m %^[%l] %v%$"
-);
+    auto async_logger = std::make_shared<spdlog::async_logger>(
+        "UniversalHookX",
+        console_sink,
+        spdlog::thread_pool( ),
+        spdlog::async_overflow_policy::overrun_oldest
+    );
 
-    auto logger = std::make_shared<spdlog::logger>("UniversalHookX", console_sink);
-    spdlog::set_default_logger(logger);
+    spdlog::set_default_logger(async_logger);
     spdlog::set_level(spdlog::level::debug);
+
+    spdlog::flush_every(std::chrono::seconds(5));
 #endif
 }
 

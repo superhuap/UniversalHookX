@@ -64,13 +64,13 @@ namespace Utils {
 
 		while (!hwnd) {
 			EnumWindows(::EnumWindowsCallback, reinterpret_cast<LPARAM>(&hwnd));
-			spdlog::info("[!] Waiting for window to appear.");
+                        LOG(spdlog::level::info, "[!] Waiting for window to appear.");
 			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		}
 
 		char name[128];
 		GetWindowTextA(hwnd, name, RTL_NUMBER_OF(name));
-		spdlog::info("[+] Got window with name: '{}'", name);
+                LOG(spdlog::level::info, "[+] Got window with name: '{}'", name);
 
 		return hwnd;
 	}
